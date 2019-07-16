@@ -17,6 +17,13 @@
 //
 // To run tests, go to the directory go-exercises/pubsub and exec:
 //      go test -v
+//
+// Complexity:
+//      Publish Method: O(n) where n is the number os subscribers of the topic
+//      Poll Method: O(n) where n is the number of unread messages
+//      Memory Space: O(h / (n + m)) where n is the number of subscribers,
+//        m is the number of topics and the h is the rate of hashtable key
+//        conflict
 package pubsub
 
 import (
