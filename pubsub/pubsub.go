@@ -14,6 +14,9 @@
 //
 // To get all unread messages for a subscriber:
 //      ps.Poll("topic0", "subscriber0")
+//
+// To run tests, go to the directory go-exercises/pubsub and exec:
+//      go test -v
 package pubsub
 
 import (
