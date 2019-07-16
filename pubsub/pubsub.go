@@ -112,8 +112,13 @@ func (ps *PubSub) Unsubscribe(topicName, subscriberName string) {
 
 	// if is pointing to an item, dec the counter
 	if sub != nil {
-		msg := sub.Value.(*_message)
-		msg.release(topic.messages, sub)
+		topic.releaseMsg(sub)
+	}
+
+	// freeing memory
+	delete(topic.subscribers, subscriberName)
+	if len(topic.subscribers) == 0 {
+		delete(ps.topics, topicName)
 	}
 }
 
@@ -224,13 +229,27 @@ func (t *_topic) poll(e *list.Element, subscriberName string) ([]string) {
 
 	if len(ret) > 0 {
 		// releases msg
-		msg := e.Value.(*_message)
-		msg.release(t.messages, e)
+		t.releaseMsg(e)
 		// empty subscriber unreads
 		t.subscribers[subscriberName] = nil
 	}
 
 	return ret
+}
+
+// releaseMsg a message if all subscribers read or unregistered
+func (t *_topic) releaseMsg(e *list.Element) {
+
+	if e != nil {
+		m := e.Value.(*_message)
+		// dec counter
+		m.subCount--
+
+		// remove from list when counter is zero
+		if m.subCount == 0 {
+			t.messages.Remove(e) // freeing memory
+		}
+	}
 }
 
 // _message strucuture used by topic messages list
@@ -239,15 +258,4 @@ type _message struct {
 	text string
 	// The count of subscribers pointing here
 	subCount int
-}
-
-func (m *_message) release(l *list.List, e *list.Element) {
-
-	// dec counter
-	m.subCount--
-
-	// remove from list when counter is zero
-	if m.subCount == 0 {
-		l.Remove(e) // freeing memory
-	}
 }
