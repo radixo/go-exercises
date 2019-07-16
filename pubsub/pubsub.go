@@ -39,6 +39,19 @@ func New() *PubSub {
 }
 
 // Subscribe to a topic, if the topic does not exists a new one is created
+//
+// The best HTTP endpoint for this method is e.g.:
+//
+// Request:
+//
+//   Path: /subscription
+//   Method: POST
+//   Content-Type: application/json
+//   Body: { "topicName": "topic0", "subscriberName": "sub0" }
+//
+// Response:
+// 
+//   Status: 201
 func (ps *PubSub) Subscribe(topicName, subscriberName string) {
 	// Get topic check if it exists
 	topic, exists := ps.topics[topicName]
@@ -67,6 +80,19 @@ func (ps *PubSub) Subscribe(topicName, subscriberName string) {
 }
 
 // Unsubscribe from a topi, if the topic does not exists just return
+//
+// The best HTTP endpoint for this method is e.g.:
+//
+// Request:
+//
+//   Path: /subscription
+//   Method: DELETE
+//   Content-Type: application/json
+//   Body: { "topicName": "topic0", "subscriberName": "sub0" }
+//
+// Response:
+// 
+//   Status: 200
 func (ps *PubSub) Unsubscribe(topicName, subscriberName string) {
 	// Get topic
 	topic, exists := ps.topics[topicName]
@@ -92,6 +118,19 @@ func (ps *PubSub) Unsubscribe(topicName, subscriberName string) {
 }
 
 // Publish a text on the given topicName
+//
+// The best HTTP endpoint for this method is e.g.:
+//
+// Request:
+//
+//   Path: /publish
+//   Method: POST
+//   Content-Type: application/json
+//   Body: { "topicName": "topic0", "jsonBody": {"attribute0":10} }
+//
+// Response:
+// 
+//   Status: 201
 func (ps *PubSub) Publish(topicName, text string) {
 	// Get topic
 	topic, exists := ps.topics[topicName]
@@ -107,6 +146,19 @@ func (ps *PubSub) Publish(topicName, text string) {
 }
 
 // Poll the pubsub for unread messages
+//
+// The best HTTP endpoint for this method is e.g.:
+//
+// Request:
+//
+//   Path: /poll?topicName=topic0&subscriberName=sub0
+//   Method: GET
+//
+// Response:
+// 
+//   Status: 200
+//   Content-Type: application/json
+//   Body: [ { "attribute0":10 } ]
 func (ps *PubSub) Poll(topicName, subscriberName string) ([]string, error) {
 	// Get topic
 	topic, exists := ps.topics[topicName]
